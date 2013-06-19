@@ -1,30 +1,27 @@
-#include "snlib.h"
-//order:
-SNodeRef SNNew(SNodeRef *node);
-ull SNPush(SNodeRef *node, void *data);
-ull SNPop(SNodeRef *node, ull index);
-ull SNFree(SNodeRef *node, ull index);
-ull SNDump(SNodeRef *node);
-ull SNCount(SNodeRef *node);
-ull SNMemory(SNodeRef *node, ull (*memUsedByData)(void *));
-ull SNFindData(SNodeRef *node, void *data, bool (*comparator)(void *, void *));
-ull SNFindNextAvailable(SNodeRef *node);
-void *SNGetDataFromIndex(SNodeRef *node, ull index);
-ull SNApplyFunction(SNodeRef *node, ull *index, void *(*appliedFunction)(void **));
-ull *SNList(SNodeRef *node);
+#include <stdio.h>
+#include <stdlib.h>
 
-//to-do:
-SNodeRef SNNew(SNodeRef *node);
-ull SNPush(SNodeRef *node, void *data);
-ull SNPop(SNodeRef *node, ull index);
-ull SNFree(SNodeRef *node, ull index);
-ull SNDump(SNodeRef *node);
-ull SNCount(SNodeRef *node);
-ull SNMemory(SNodeRef *node, ull (*memUsedByData)(void *));
-ull SNFindData(SNodeRef *node, void *data, bool (*comparator)(void *, void *));
-void *SNGetDataFromIndex(SNodeRef *node, ull index);
-ull SNApplyFunction(SNodeRef *node, ull *index, void *(*appliedFunction)(void **));
-ull *SNList(SNodeRef *node);
+#include "ndlib.h"
+
+//order:
+NDNodeControllerRef NDNewController(ull dimensions);
+ull NDDeleteController(NDNodeControllerRef controller, ull ID);
+ull NDPush(NDNodeControllerRef controller, void *data);
+ull NDPop(NDNodeControllerRef controller, ull index);
+NDNodeRef NDNewNode(NDNodeControllerRef controller);
+ull NDDeleteNode(NDNodeControllerRef controller, ull index);
+ull NDCount(NDNodeControllerRef controller);
+ull NDMemory(NDNodeControllerRef controller, ull (*memUsedByData)(void *));
+ull NDFindData(NDNodeControllerRef controller, void *data, bool (*comparator)(void *, void *));
+ull NDFindNextAvailable(NDNodeControllerRef controller);
+NDNodeRef NDNodeRefAtIndex(NDNodeControllerRef controller, ull index);
+void *NDDataAtIndex(NDNodeControllerRef controller, ull index);
+ull NDApplyFunction(NDNodeControllerRef controller, ull *indexes, void *(*function)(void **));
+
+
+	if (controller == NULL || index == 0 || function == NULL) {
+return 0;
+}
 
 
 //code from another list code I made but will reuse to build this new one.
@@ -85,38 +82,6 @@ void mnPop(mtxnode **node, int index) {
 	return;
 }
 
-void mnShow(mtxnode *node) {
-	if (node == NULL) {
-		printf("#Empty node.\n");
-		return;
-	}
-
-	printf("Matrix %d:\n", node->index);
-	mnUpdate(node);
-	mnPrint(node);
-	mnProperties(node);
-
-/*if (debug) {
-	dbgPointer(node->self, "\t");
-	dbgPointer(node->prev, "\t");
-	dbgPointer(node->next, "\n");
-	printf("--------------------\n");
-}
-*/
-	return;
-}
-void mnShowAll(mtxnode *node) {
-if (debug) dbgPointer(node, "\n");
-	if (node == NULL) {
-		printf("#Empty node.\n");
-		return;
-	}
-
-	for (mtxnode *aux = node; aux != NULL; aux = aux->next)
-		mnShow(aux);
-	return;
-}
-
 void mnFree(mtxnode *node) {
 	if (node == NULL) {
 		printf("#Empty node.\n");
@@ -151,18 +116,6 @@ long int mnMemory(mtxnode *node) {
 	} while (aux != NULL);
 	return size;
 }
-void mnUpdateAll(mtxnode *node) {
-	if (node == NULL) {
-		printf("#Empty node.\n");
-		return;
-	}
-
-	if (node->next != NULL)
-		mnUpdateAll(node->next);
-	if (node != NULL)
-		mnUpdate(node);
-	return;
-}
 char mnCount(mtxnode *node) {
 	if (node == NULL) {
 		printf("#Empty node.\n");
@@ -190,44 +143,6 @@ char *mnList(mtxnode *node) {
 		list[i] = aux->index;
 
 	return list;
-}
-char *mnEnumerate(mtxnode *node) {
-	if (node == NULL) {
-		printf("#Empty node.\n");
-		return NULL;
-	}
-
-	char *list = mnList(node);
-	char *enumeration = (char *) malloc(list[0] * 4 * sizeof(char));
-	enumeration[list[0] * 4] = 0;
-
-	mtxnode *aux = node;
-	for (unsigned char i = 0, j = 0; j < list[0]; j++, aux = aux->next) {
-		enumeration[i] = aux->index + '0'; i++;
-
-		if (j < list[0] - 1) {
-			enumeration[i] = ','; i++;
-			enumeration[i] = ' '; i++;
-		}
-	}
-
-	unsigned char strlen;
-	for (strlen = 0; enumeration[strlen] != 0; strlen++);
-	enumeration = (char *) realloc(enumeration, (strlen + 1) * sizeof(char));
-	enumeration[strlen] = 0;
-
-	return enumeration;
-}
-
-//matrix
-void mnPrint(mtxnode *node) {
-	if (node == NULL) {
-		printf("#Empty node.\n");
-		return;
-	}
-
-	mtxPrint(node->data);
-	return;
 }
 
 ull SNFindNextAvailable(SNodeRef *node) {

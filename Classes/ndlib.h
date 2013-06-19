@@ -7,24 +7,22 @@ will change to sharedInstance based list to simplify function calls, but will be
 With sharedInstance feature, indexes can be provided alone
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "simplenode.h"
+#include "ndnode.h"
 
 // Allocates and initializes a new controller. All nodes created with this controller will have the same dimensions as the controller.
-NDNodeControllerRef NDNewController(ull dimensions);
+NDNodeControllerRef NDCreateController(ull dimensions);
 // Deletes the controller with ID and all its nodes.
 ull NDDeleteController(NDNodeControllerRef controller, ull ID);
+
+// Creates a new node for the controller with n dimensions
+NDNodeRef NDCreateNode(NDNodeControllerRef controller, ull n);
+// Deletes the node with index in the controller
+ull NDDeleteNode(NDNodeControllerRef controller, ull index);
 
 // Adds a new node with data to the controller
 ull NDPush(NDNodeControllerRef controller, void *data);
 // Removes the node with index from the controller
 ull NDPop(NDNodeControllerRef controller, ull index);
-
-// Creates a new node for the controller
-NDNodeRef NDNewNode(NDNodeControllerRef controller);
-// Dwletes the node with index in the controller
-ull NDDeleteNode(NDNodeControllerRef controller, ull index);
 
 // Returns the number of data nodes loaded in a list
 ull NDCount(NDNodeControllerRef controller);
@@ -44,12 +42,13 @@ ull NDFindData(NDNodeControllerRef controller, void *data, bool (*comparator)(vo
  */
 ull NDFindNextAvailable(NDNodeControllerRef controller);
 
+// Returns the pointer to the node with index in controller
 NDNodeRef NDNodeRefAtIndex(NDNodeControllerRef controller, ull index);
 
 // Retrieve data from node
 void *NDDataAtIndex(NDNodeControllerRef controller, ull index);
 
-// Apply a function to a NULL-terminated array of data nodes.
+// Apply a function to a NULL-terminated array of node indexes.
 ull NDApplyFunction(NDNodeControllerRef controller, ull *indexes, void *(*function)(void **));
 
 
